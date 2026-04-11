@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <string.h>
 #include "variadic_functions.h"
 
 /**
@@ -16,29 +15,33 @@ void print_all(const char * const format, ...)
 	int sep;
 	char *str;
 	char *types = "cifs";
+	int t;
 
 	va_start(args, format);
 	i = 0;
 	sep = 0;
 	while (format && format[i])
 	{
-		str = NULL;
-		if (strchr(types, format[i]))
+		t = 0;
+		while (types[t] && types[t] != format[i])
+			t++;
+		if (types[t])
 		{
+			str = NULL;
 			if (sep)
 				printf(", ");
-			if (format[i] == 'c')
+			sep = 1;
+			if (t == 0)
 				printf("%c", va_arg(args, int));
-			if (format[i] == 'i')
+			if (t == 1)
 				printf("%d", va_arg(args, int));
-			if (format[i] == 'f')
+			if (t == 2)
 				printf("%f", va_arg(args, double));
-			if (format[i] == 's')
+			if (t == 3)
 			{
 				str = va_arg(args, char *);
 				printf("%s", str ? str : "(nil)");
 			}
-			sep = 1;
 		}
 		i++;
 	}
