@@ -27,21 +27,14 @@ void print_all(const char * const format, ...)
 			t++;
 		if (types[t])
 		{
-			str = NULL;
+			str = (t == 3) ? va_arg(args, char *) : NULL;
 			if (sep)
 				printf(", ");
+			t == 0 ? printf("%c", va_arg(args, int)) :
+			t == 1 ? printf("%d", va_arg(args, int)) :
+			t == 2 ? printf("%f", va_arg(args, double)) :
+			printf("%s", str ? str : "(nil)");
 			sep = 1;
-			if (t == 0)
-				printf("%c", va_arg(args, int));
-			if (t == 1)
-				printf("%d", va_arg(args, int));
-			if (t == 2)
-				printf("%f", va_arg(args, double));
-			if (t == 3)
-			{
-				str = va_arg(args, char *);
-				printf("%s", str ? str : "(nil)");
-			}
 		}
 		i++;
 	}
