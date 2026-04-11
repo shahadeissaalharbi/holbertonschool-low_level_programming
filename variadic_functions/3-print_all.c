@@ -15,43 +15,42 @@ void print_all(const char * const format, ...)
 	int separator;
 	char c;
 	int integer;
-	float f;
+	double f;
 	char *str;
+	const char *types = "cifs";
+	int t;
 
 	va_start(args, format);
 	i = 0;
 	separator = 0;
 	while (format && format[i])
 	{
+		t = 0;
+		while (types[t] && types[t] != format[i])
+			t++;
+		if (types[t] && separator)
+			printf(", ");
 		if (format[i] == 'c')
 		{
 			c = va_arg(args, int);
-			if (separator)
-				printf(", ");
 			printf("%c", c);
 			separator = 1;
 		}
-		if (format[i] == 'i')
+		else if (format[i] == 'i')
 		{
 			integer = va_arg(args, int);
-			if (separator)
-				printf(", ");
 			printf("%d", integer);
 			separator = 1;
 		}
-		if (format[i] == 'f')
+		else if (format[i] == 'f')
 		{
-			f = (float)va_arg(args, double);
-			if (separator)
-				printf(", ");
+			f = va_arg(args, double);
 			printf("%f", f);
 			separator = 1;
 		}
-		if (format[i] == 's')
+		else if (format[i] == 's')
 		{
 			str = va_arg(args, char *);
-			if (separator)
-				printf(", ");
 			if (str == NULL)
 				printf("(nil)");
 			else
