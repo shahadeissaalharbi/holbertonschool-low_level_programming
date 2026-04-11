@@ -12,50 +12,34 @@ void print_all(const char * const format, ...)
 {
 	va_list args;
 	unsigned int i;
-	int separator;
-	char c;
-	int integer;
-	double f;
+	int sep;
 	char *str;
-	const char *types = "cifs";
-	int t;
+	char tmp[50];
 
 	va_start(args, format);
 	i = 0;
-	separator = 0;
+	sep = 0;
 	while (format && format[i])
 	{
-		t = 0;
-		while (types[t] && types[t] != format[i])
-			t++;
-		if (types[t] && separator)
-			printf(", ");
+		str = NULL;
+		tmp[0] = '\0';
 		if (format[i] == 'c')
-		{
-			c = va_arg(args, int);
-			printf("%c", c);
-			separator = 1;
-		}
-		else if (format[i] == 'i')
-		{
-			integer = va_arg(args, int);
-			printf("%d", integer);
-			separator = 1;
-		}
-		else if (format[i] == 'f')
-		{
-			f = va_arg(args, double);
-			printf("%f", f);
-			separator = 1;
-		}
-		else if (format[i] == 's')
+			sprintf(tmp, "%c", va_arg(args, int));
+		if (format[i] == 'i')
+			sprintf(tmp, "%d", va_arg(args, int));
+		if (format[i] == 'f')
+			sprintf(tmp, "%f", va_arg(args, double));
+		if (format[i] == 's')
 		{
 			str = va_arg(args, char *);
-			if (str == NULL)
-				printf("(nil)");
-			else
-				printf("%s", str);
-			separator = 1;
+			sprintf(tmp, "%s", str ? str : "(nil)");
+		}
+		if (tmp[0] != '\0')
+		{
+			if (sep)
+				printf(", ");
+			printf("%s", tmp);
+			sep = 1;
 		}
 		i++;
 	}
