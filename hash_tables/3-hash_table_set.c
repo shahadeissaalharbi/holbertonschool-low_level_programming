@@ -1,6 +1,36 @@
 #include "hash_tables.h"
 
 /**
+ * update_value - Updates value if key already exists
+ * @ht: The hash table
+ * @key: The key to search for
+ * @value: The new value
+ * @index: The index in the array
+ *
+ * Return: 1 if updated, 0 if not found
+ */
+static int update_value(hash_table_t *ht, const char *key,
+			const char *value, unsigned long int index)
+{
+	hash_node_t *node;
+
+	node = ht->array[index];
+	while (node != NULL)
+	{
+		if (strcmp(node->key, key) == 0)
+		{
+			free(node->value);
+			node->value = strdup(value);
+			if (node->value == NULL)
+				return (0);
+			return (1);
+		}
+		node = node->next;
+	}
+	return (0);
+}
+
+/**
  * hash_table_set - Adds an element to the hash table
  * @ht: The hash table
  * @key: The key (cannot be empty)
@@ -18,19 +48,8 @@ int hash_table_set(hash_table_t *ht, const char *key, const char *value)
 
 	index = key_index((const unsigned char *)key, ht->size);
 
-	node = ht->array[index];
-	while (node != NULL)
-	{
-		if (strcmp(node->key, key) == 0)
-		{
-			free(node->value);
-			node->value = strdup(value);
-			if (node->value == NULL)
-				return (0);
-			return (1);
-		}
-		node = node->next;
-	}
+	if (update_value(ht, key, value, index))
+		return (1);
 
 	node = malloc(sizeof(hash_node_t));
 	if (node == NULL)
@@ -42,7 +61,6 @@ int hash_table_set(hash_table_t *ht, const char *key, const char *value)
 		free(node);
 		return (0);
 	}
-
 	node->value = strdup(value);
 	if (node->value == NULL)
 	{
@@ -50,9 +68,7 @@ int hash_table_set(hash_table_t *ht, const char *key, const char *value)
 		free(node);
 		return (0);
 	}
-
 	node->next = ht->array[index];
 	ht->array[index] = node;
-
 	return (1);
 }
